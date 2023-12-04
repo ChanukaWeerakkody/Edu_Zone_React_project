@@ -8,15 +8,14 @@
   },
   "compilerOptions": {
     "module": "NodeNext",
-    "moduleResolution": "Node"
+    "moduleResolution": "Node",
+    "esModuleInterop": true
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@types/bcryptjs": "^2.4.6",
-    "@types/cookie-parser": "^1.4.6",
-    "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.5",
     "bcryptjs": "^2.4.3",
@@ -29,6 +28,8 @@
     "typescript": "^5.3.2"
   },
   "devDependencies": {
+    "@types/cookie-parser": "^1.4.6",
+    "@types/cors": "^2.8.17",
     "@types/node": "^20.10.3",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0"
