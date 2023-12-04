@@ -20,3 +20,9 @@ exports.app.get("/test", function (req, res, next) {
         message: "Test route successful",
     });
 });
+//unknown route
+exports.app.all("*", function (req, res, next) {
+    var err = new Error("Route ".concat(req.originalUrl, " not found"));
+    err.statusCode = 404;
+    next(err);
+});
