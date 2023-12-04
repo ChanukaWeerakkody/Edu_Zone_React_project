@@ -38,7 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var mongoose = require("mongoose");
 require('dotenv').config();
-var dbUrl = process.env.DB_URI || '';
+var dbUrl = process.env.DB_URL || '';
 var connectDB = function () { return __awaiter(void 0, void 0, void 0, function () {
     var error_1;
     return __generator(this, function (_a) {
