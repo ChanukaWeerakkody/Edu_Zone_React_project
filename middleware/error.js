@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ErrorMiddleware = void 0;
 var ErrorHandler_1 = require("../util/ErrorHandler");
-module.exports = function (err, req, res, next) {
+var ErrorMiddleware = function (err, req, res, next) {
     err.statusCode = err.statusCode || 500;
     err.message = err.message || "Internal server error";
     //wrong mongo id error
@@ -24,9 +25,9 @@ module.exports = function (err, req, res, next) {
         var message = "Json web token is expired. Try again";
         err = new ErrorHandler_1.default(message, 400);
     }
-    /*res.status(err.statusCode as number).json({
+    res.status(err.statusCode).json({
         success: false,
         message: err.message
-    })
-*/
+    });
 };
+exports.ErrorMiddleware = ErrorMiddleware;

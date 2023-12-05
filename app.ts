@@ -5,7 +5,7 @@ import * as express from "express";
 export const app = express();
 
 import * as cors from "cors";
-
+import {ErrorMiddleware} from "./middleware/error";
 
 //body parser
 app.use(express.json({limit: "50mb"}));
@@ -31,3 +31,5 @@ app.all("*",(req:Request, res:Response, next:NextFunction) =>{
     err.statusCode =404;
     next(err);
 });
+
+app.use(ErrorMiddleware);
