@@ -60,6 +60,7 @@ export const registerUser = CatchAsyncError(async(req:Request,res:Response,next:
             });
         }catch (error){
             return next(new ErrorHandler(error.message,500));
+
         }
 
     }catch (error){

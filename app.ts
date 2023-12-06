@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from "express";
 require('dotenv').config();
 import * as express from "express";
 export const app = express();
+import userRouter from "./route/user.route";
 
 import * as cors from "cors";
 import {ErrorMiddleware} from "./middleware/error";
@@ -31,5 +32,8 @@ app.all("*",(req:Request, res:Response, next:NextFunction) =>{
     err.statusCode =404;
     next(err);
 });
+
+//Routes
+app.use("/api/v1", userRouter);
 
 app.use(ErrorMiddleware);
