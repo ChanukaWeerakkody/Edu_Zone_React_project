@@ -56,9 +56,10 @@ export const createActivationToken = (user:any):IActivationToken =>{
     },process.env.ACTIVATION_SECRET as Secret,{
         expiresIn:"5m"
     });
-
     return {token,activationCode};
 }
+
+
 
 
 
