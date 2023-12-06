@@ -36,68 +36,40 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var mongoose_1 = require("mongoose");
-var bcrypt = require("bcryptjs");
-var emailRegexPattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-var userSchema = new mongoose_1.default.Schema({
-    name: {
-        type: String,
-        required: [true, "Please add a name"]
-    },
-    email: {
-        type: String,
-        required: [true, "Please add an email"],
-        unique: true,
-        validate: [emailRegexPattern, "Please add a valid email"]
-    },
-    password: {
-        type: String,
-        required: [true, "Please add a password"]
-    },
-    role: {
-        type: String,
-        default: "user"
-    },
-    isVerified: {
-        type: Boolean,
-        default: false
-    },
-    courses: [{
-            courseId: String,
-        }],
-}, {
-    timestamps: true
-});
-//Hashing password
-userSchema.pre("save", function (next) {
-    return __awaiter(this, void 0, void 0, function () {
-        var _a;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0:
-                    if (!this.isModified("password")) {
-                        next();
-                    }
-                    _a = this;
-                    return [4 /*yield*/, bcrypt.hash(this.password, 10)];
-                case 1:
-                    _a.password = _b.sent();
-                    next();
-                    return [2 /*return*/];
-            }
-        });
+require('dotenv').config();
+var nodemailer = require("nodemailer");
+var path = require("path");
+var ejs = require("ejs");
+var sendMail = function (options) { return __awaiter(void 0, void 0, void 0, function () {
+    var transporter, email, subject, template, data, templatePath, html, mailOptions;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                transporter = nodemailer.createTransport({
+                    host: process.env.SMTP_HOST,
+                    port: parseInt(process.env.SMTP_PORT || '587'),
+                    service: process.env.SMTP_SERVICE,
+                    auth: {
+                        user: process.env.SMTP_USER,
+                        pass: process.env.SMTP_PASSWORD
+                    },
+                });
+                email = options.email, subject = options.subject, template = options.template, data = options.data;
+                templatePath = (path.join(__dirname, '../mails', template));
+                return [4 /*yield*/, ejs.renderFile(templatePath, data)];
+            case 1:
+                html = _a.sent();
+                mailOptions = {
+                    from: process.env.SMTP_MAIL,
+                    to: email,
+                    subject: subject,
+                    html: html
+                };
+                return [4 /*yield*/, transporter.sendMail(mailOptions)];
+            case 2:
+                _a.sent();
+                return [2 /*return*/];
+        }
     });
-});
-//Compare password
-userSchema.methods.comparePassword = function (enteredPassword) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, bcrypt.compare(enteredPassword, this.password)];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
-        });
-    });
-};
-var userModel = mongoose_1.default.model("User", userSchema);
-exports.default = userModel;
+}); };
+exports.default = sendMail;

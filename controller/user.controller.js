@@ -36,12 +36,73 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.registerUser = void 0;
+exports.createActivationToken = exports.registerUser = void 0;
+var path = require("path");
+require('dotenv').config();
+var ErrorHandler_1 = require("../util/ErrorHandler");
 var catchAsyncErrors_1 = require("../middleware/catchAsyncErrors");
+var user_model_1 = require("../models/user.model");
+var jwt = require("jsonwebtoken");
+var ejs = require("ejs");
+var sendMail_1 = require("../util/sendMail");
 exports.registerUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, name, email, password, avatar;
+    var _a, name_1, email, password, isEmailExist, user, activationToken, activationCode, data, html, error_1, error_2;
     return __generator(this, function (_b) {
-        _a = req.body, name = _a.name, email = _a.email, password = _a.password, avatar = _a.avatar;
-        return [2 /*return*/];
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 6, , 7]);
+                _a = req.body, name_1 = _a.name, email = _a.email, password = _a.password;
+                return [4 /*yield*/, user_model_1.default.findOne({ email: email })];
+            case 1:
+                isEmailExist = _b.sent();
+                if (isEmailExist) {
+                    return [2 /*return*/, next(new ErrorHandler_1.default("Email already exists", 400))];
+                }
+                user = {
+                    name: name_1,
+                    email: email,
+                    password: password,
+                };
+                activationToken = (0, exports.createActivationToken)(user);
+                activationCode = activationToken.activationCode;
+                data = { user: { name: user.name }, activationCode: activationCode };
+                html = ejs.renderFile(path.join(__dirname, "mails/activation-mail.ejs"), data);
+                _b.label = 2;
+            case 2:
+                _b.trys.push([2, 4, , 5]);
+                return [4 /*yield*/, (0, sendMail_1.default)({
+                        email: user.email,
+                        subject: "Activate your account",
+                        template: "activation-mail.ejs",
+                        data: data,
+                    })];
+            case 3:
+                _b.sent();
+                res.status(200).json({
+                    success: true,
+                    message: "Account created successfully, please check ".concat(user.email, " to activate your account"),
+                    activationToken: activationToken.token,
+                });
+                return [3 /*break*/, 5];
+            case 4:
+                error_1 = _b.sent();
+                return [2 /*return*/, next(new ErrorHandler_1.default(error_1.message, 500))];
+            case 5: return [3 /*break*/, 7];
+            case 6:
+                error_2 = _b.sent();
+                return [2 /*return*/, next(new ErrorHandler_1.default(error_2.message, 500))];
+            case 7: return [2 /*return*/];
+        }
     });
 }); });
+var createActivationToken = function (user) {
+    var activationCode = Math.floor(1000 + Math.random() * 9000).toString();
+    var token = jwt.sign({
+        user: user,
+        activationCode: activationCode
+    }, process.env.ACTIVATION_SECRET, {
+        expiresIn: "5m"
+    });
+    return { token: token, activationCode: activationCode };
+};
+exports.createActivationToken = createActivationToken;

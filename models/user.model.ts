@@ -1,5 +1,6 @@
 import mongoose ,{Document,Model,Schema} from "mongoose";
-import bcrypt from "bcryptjs";
+import * as bcrypt from "bcryptjs";
+
 
 const emailRegexPattern:RegExp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 

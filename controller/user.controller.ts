@@ -1,13 +1,20 @@
-import path from "path";
+import * as path from "path";
 
 require('dotenv').config();
 import {Request,Response,NextFunction} from "express";
 import ErrorHandler from "../util/ErrorHandler";
 import {CatchAsyncError} from "../middleware/catchAsyncErrors";
+import userModel from "../models/user.model";
+import * as jwt from "jsonwebtoken";
+import * as ejs from "ejs";
+
+
+
 import * as bcrypt from "bcryptjs";
-import userModel, {IUser} from "../models/user.model";
-import jwt, {Secret} from "jsonwebtoken";
-import ejs from "ejs";
+import {Secret} from "jsonwebtoken";
+import sendMail from "../util/sendMail";
+
+
 
 //Register user
 interface IRegistrationBody{
@@ -36,7 +43,24 @@ export const registerUser = CatchAsyncError(async(req:Request,res:Response,next:
         const activationCode = activationToken.activationCode;
 
         const data = {user:{name:user.name},activationCode};
-        const html = ejs.renderFile(path.join(__dirname,"../views/activation.ejs"),data);
+        const html = ejs.renderFile(path.join(__dirname,"mails/activation-mail.ejs"),data);
+
+        try{
+            await sendMail({
+                email:user.email,
+                subject:"Activate your account",
+                template:"activation-mail.ejs",
+                data,
+            });
+
+            res.status(200).json({
+                success:true,
+                message:`Account created successfully, please check ${user.email} to activate your account`,
+                activationToken:activationToken.token,
+            });
+        }catch (error){
+            return next(new ErrorHandler(error.message,500));
+        }
 
     }catch (error){
         return next(new ErrorHandler(error.message,500));
