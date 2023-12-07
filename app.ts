@@ -1,12 +1,15 @@
 import cookieParser = require("cookie-parser");
 import { Request, Response, NextFunction } from "express";
 require('dotenv').config();
+
 import * as express from "express";
 export const app = express();
-import userRouter from "./route/user.route";
 
+import userRouter from "./route/user.route";
 import * as cors from "cors";
 import {ErrorMiddleware} from "./middleware/error";
+import {registerUser} from "./controller/user.controller";
+
 
 //body parser
 app.use(express.json({limit: "50mb"}));
@@ -18,6 +21,9 @@ app.use(cookieParser());
 app.use(cors({
     origin: process.env.ORIGIN
 }));
+
+//Routes
+app.use('/api/v1', userRouter);
 
 //testing api
 app.get("/test", (req: Request, res: Response, next: NextFunction) => {
@@ -33,7 +39,6 @@ app.all("*",(req:Request, res:Response, next:NextFunction) =>{
     next(err);
 });
 
-//Routes
-app.use("/api/v1", userRouter);
+
 
 app.use(ErrorMiddleware);

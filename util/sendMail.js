@@ -50,7 +50,7 @@ var sendMail = function (options) { return __awaiter(void 0, void 0, void 0, fun
                     port: parseInt(process.env.SMTP_PORT || '587'),
                     service: process.env.SMTP_SERVICE,
                     auth: {
-                        user: process.env.SMTP_USER,
+                        user: process.env.SMTP_MAIL,
                         pass: process.env.SMTP_PASSWORD
                     },
                 });

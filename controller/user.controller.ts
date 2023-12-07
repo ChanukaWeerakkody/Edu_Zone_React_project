@@ -43,7 +43,7 @@ export const registerUser = CatchAsyncError(async(req:Request,res:Response,next:
         const activationCode = activationToken.activationCode;
 
         const data = {user:{name:user.name},activationCode};
-        const html = ejs.renderFile(path.join(__dirname,"mails/activation-mail.ejs"),data);
+        const html = ejs.renderFile(path.join(__dirname,"../mails/activation-mail.ejs"),data);
 
         try{
             await sendMail({
@@ -60,7 +60,6 @@ export const registerUser = CatchAsyncError(async(req:Request,res:Response,next:
             });
         }catch (error){
             return next(new ErrorHandler(error.message,500));
-
         }
 
     }catch (error){

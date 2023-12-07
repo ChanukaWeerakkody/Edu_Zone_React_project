@@ -4,7 +4,6 @@ import {Transporter} from "nodemailer";
 import * as path from "path";
 import * as ejs from "ejs";
 
-
 interface EmailOptions{
     email:string;
     subject:string;
@@ -20,7 +19,7 @@ const sendMail = async(options:EmailOptions):Promise <void> =>{
         port:parseInt(process.env.SMTP_PORT || '587'),
         service:process.env.SMTP_SERVICE,
         auth:{
-            user:process.env.SMTP_USER,
+            user:process.env.SMTP_MAIL,
             pass:process.env.SMTP_PASSWORD
         },
     });
@@ -28,6 +27,7 @@ const sendMail = async(options:EmailOptions):Promise <void> =>{
 
     //get path of template
     const templatePath = (path.join(__dirname,'../mails',template));
+    
 
     //render template
     const html:string =await ejs.renderFile(templatePath,data);

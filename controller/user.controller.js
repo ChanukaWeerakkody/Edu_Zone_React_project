@@ -66,7 +66,7 @@ exports.registerUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, re
                 activationToken = (0, exports.createActivationToken)(user);
                 activationCode = activationToken.activationCode;
                 data = { user: { name: user.name }, activationCode: activationCode };
-                html = ejs.renderFile(path.join(__dirname, "mails/activation-mail.ejs"), data);
+                html = ejs.renderFile(path.join(__dirname, "../mails/activation-mail.ejs"), data);
                 _b.label = 2;
             case 2:
                 _b.trys.push([2, 4, , 5]);
