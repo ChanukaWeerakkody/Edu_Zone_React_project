@@ -14,6 +14,7 @@ import user from "../models/user.model";
 import * as bcrypt from "bcryptjs";
 import {Secret} from "jsonwebtoken";
 import sendMail from "../util/sendMail";
+import {sendToken} from "../util/jwt";
 
 
 
@@ -125,7 +126,37 @@ export const activateUser = CatchAsyncError(async(req:Request,res:Response,next:
 });
 
 
+//Login user
+interface ILoginRequest{
+    email:string;
+    password:string;
+}
 
+export const loginUser = CatchAsyncError(async(req:Request,res:Response,next:NextFunction)=>{
+    try {
+        const {email,password} = req.body as ILoginRequest;
+        if (!email || !password){
+            return next(new ErrorHandler("Please enter email and password",400));
+        }
+
+        const user = await userModel.findOne({email}).select("+password");
+
+        if(!user){
+            return next(new ErrorHandler("Invalid email or password",400));
+        }
+
+        const isPasswordMatched = await user.comparePassword(password);
+
+        if(!isPasswordMatched){
+            return next(new ErrorHandler("Invalid email or password",400));
+        }
+
+        sendToken(user,200,res);
+
+    }catch (error:any){
+        return next(new ErrorHandler(error.message,500));
+    }
+})
 
 
 

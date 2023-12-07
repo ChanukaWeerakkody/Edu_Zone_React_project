@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.activateUser = exports.createActivationToken = exports.registerUser = void 0;
+exports.loginUser = exports.activateUser = exports.createActivationToken = exports.registerUser = void 0;
 var path = require("path");
 require('dotenv').config();
 var ErrorHandler_1 = require("../util/ErrorHandler");
@@ -45,6 +45,7 @@ var user_model_1 = require("../models/user.model");
 var jwt = require("jsonwebtoken");
 var ejs = require("ejs");
 var sendMail_1 = require("../util/sendMail");
+var jwt_1 = require("../util/jwt");
 exports.registerUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, name_1, email, password, isEmailExist, user_1, activationToken, activationCode, data, html, error_1, error_2;
     return __generator(this, function (_b) {
@@ -140,6 +141,37 @@ exports.activateUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, re
             case 3:
                 error_3 = _c.sent();
                 return [2 /*return*/, next(new ErrorHandler_1.default(error_3.message, 500))];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); });
+exports.loginUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, email, password, user_3, isPasswordMatched, error_4;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 3, , 4]);
+                _a = req.body, email = _a.email, password = _a.password;
+                if (!email || !password) {
+                    return [2 /*return*/, next(new ErrorHandler_1.default("Please enter email and password", 400))];
+                }
+                return [4 /*yield*/, user_model_1.default.findOne({ email: email }).select("+password")];
+            case 1:
+                user_3 = _b.sent();
+                if (!user_3) {
+                    return [2 /*return*/, next(new ErrorHandler_1.default("Invalid email or password", 400))];
+                }
+                return [4 /*yield*/, user_3.comparePassword(password)];
+            case 2:
+                isPasswordMatched = _b.sent();
+                if (!isPasswordMatched) {
+                    return [2 /*return*/, next(new ErrorHandler_1.default("Invalid email or password", 400))];
+                }
+                (0, jwt_1.sendToken)(user_3, 200, res);
+                return [3 /*break*/, 4];
+            case 3:
+                error_4 = _b.sent();
+                return [2 /*return*/, next(new ErrorHandler_1.default(error_4.message, 500))];
             case 4: return [2 /*return*/];
         }
     });
