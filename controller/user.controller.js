@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createActivationToken = exports.registerUser = void 0;
+exports.activateUser = exports.createActivationToken = exports.registerUser = void 0;
 var path = require("path");
 require('dotenv').config();
 var ErrorHandler_1 = require("../util/ErrorHandler");
@@ -46,7 +46,7 @@ var jwt = require("jsonwebtoken");
 var ejs = require("ejs");
 var sendMail_1 = require("../util/sendMail");
 exports.registerUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, name_1, email, password, isEmailExist, user, activationToken, activationCode, data, html, error_1, error_2;
+    var _a, name_1, email, password, isEmailExist, user_1, activationToken, activationCode, data, html, error_1, error_2;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -58,20 +58,20 @@ exports.registerUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, re
                 if (isEmailExist) {
                     return [2 /*return*/, next(new ErrorHandler_1.default("Email already exists", 400))];
                 }
-                user = {
+                user_1 = {
                     name: name_1,
                     email: email,
                     password: password,
                 };
-                activationToken = (0, exports.createActivationToken)(user);
+                activationToken = (0, exports.createActivationToken)(user_1);
                 activationCode = activationToken.activationCode;
-                data = { user: { name: user.name }, activationCode: activationCode };
+                data = { user: { name: user_1.name }, activationCode: activationCode };
                 html = ejs.renderFile(path.join(__dirname, "../mails/activation-mail.ejs"), data);
                 _b.label = 2;
             case 2:
                 _b.trys.push([2, 4, , 5]);
                 return [4 /*yield*/, (0, sendMail_1.default)({
-                        email: user.email,
+                        email: user_1.email,
                         subject: "Activate your account",
                         template: "activation-mail.ejs",
                         data: data,
@@ -80,7 +80,7 @@ exports.registerUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, re
                 _b.sent();
                 res.status(200).json({
                     success: true,
-                    message: "Account created successfully, please check ".concat(user.email, " to activate your account"),
+                    message: "Account created successfully, please check ".concat(user_1.email, " to activate your account"),
                     activationToken: activationToken.token,
                 });
                 return [3 /*break*/, 5];
@@ -106,3 +106,41 @@ var createActivationToken = function (user) {
     return { token: token, activationCode: activationCode };
 };
 exports.createActivationToken = createActivationToken;
+exports.activateUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, activation_token, activation_Code, newUser, _b, name_2, email, password, existUser, user_2, error_3;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                _c.trys.push([0, 3, , 4]);
+                _a = req.body, activation_token = _a.activation_token, activation_Code = _a.activation_Code;
+                newUser = jwt.verify(activation_token, process.env.ACTIVATION_SECRET);
+                if (newUser.activationCode !== activation_Code) {
+                    return [2 /*return*/, next(new ErrorHandler_1.default("Invalid activation code", 400))];
+                }
+                _b = newUser.user, name_2 = _b.name, email = _b.email, password = _b.password;
+                return [4 /*yield*/, user_model_1.default.findOne({ email: email })];
+            case 1:
+                existUser = _c.sent();
+                if (existUser) {
+                    return [2 /*return*/, next(new ErrorHandler_1.default("User already exists", 400))];
+                }
+                return [4 /*yield*/, user_model_1.default.create({
+                        name: name_2,
+                        email: email,
+                        password: password
+                    })];
+            case 2:
+                user_2 = _c.sent();
+                res.status(200).json({
+                    success: true,
+                    message: "Account activated successfully",
+                    user: user_2
+                });
+                return [3 /*break*/, 4];
+            case 3:
+                error_3 = _c.sent();
+                return [2 /*return*/, next(new ErrorHandler_1.default(error_3.message, 500))];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); });

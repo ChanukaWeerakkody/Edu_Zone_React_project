@@ -4,10 +4,11 @@ require('dotenv').config();
 import {Request,Response,NextFunction} from "express";
 import ErrorHandler from "../util/ErrorHandler";
 import {CatchAsyncError} from "../middleware/catchAsyncErrors";
-import userModel from "../models/user.model";
+import userModel, {IUser} from "../models/user.model";
 import * as jwt from "jsonwebtoken";
 import * as ejs from "ejs";
 
+import user from "../models/user.model";
 
 
 import * as bcrypt from "bcryptjs";
@@ -83,7 +84,45 @@ export const createActivationToken = (user:any):IActivationToken =>{
     return {token,activationCode};
 }
 
+//Activate user
+interface IActivationRequest{
+    activation_token:string;
+    activation_Code:string;
+}
 
+export const activateUser = CatchAsyncError(async(req:Request,res:Response,next:NextFunction)=>{
+    try {
+        const {activation_token,activation_Code} = req.body as IActivationRequest;
+
+        const newUser:{user,activationCode} = jwt.verify(activation_token,process.env.ACTIVATION_SECRET as string
+        ) as { user:IUser,activationCode:string };
+
+        if(newUser.activationCode !== activation_Code){
+            return next(new ErrorHandler("Invalid activation code",400));
+        }
+
+        const {name,email,password} = newUser.user;
+
+        const existUser = await userModel.findOne({email});
+
+        if(existUser){
+            return next(new ErrorHandler("User already exists",400));
+        }
+
+        const user = await userModel.create({
+            name,email,password
+        });
+
+        res.status(200).json({
+            success:true,
+            message:"Account activated successfully",
+            user
+        })
+
+    }catch (error:any){
+        return next(new ErrorHandler(error.message,500));
+    }
+})
 
 
 
