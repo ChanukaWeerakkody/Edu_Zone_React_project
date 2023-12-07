@@ -36,8 +36,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+require('dotenv').config();
 var mongoose_1 = require("mongoose");
 var bcrypt = require("bcryptjs");
+var jwt = require("jsonwebtoken");
 var emailRegexPattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 var userSchema = new mongoose_1.default.Schema({
     name: {
@@ -88,6 +90,18 @@ userSchema.pre("save", function (next) {
         });
     });
 });
+//sign access token
+userSchema.methods.signAccessToken = function () {
+    return jwt.sign({ id: this._id }, process.env.ACCESS_TOKEN || "", {
+        expiresIn: "15m"
+    });
+};
+//sign refresh token
+userSchema.methods.signRefreshToken = function () {
+    return jwt.sign({ id: this._id }, process.env.REFRESH_TOKEN || "", {
+        expiresIn: "7d"
+    });
+};
 //Compare password
 userSchema.methods.comparePassword = function (enteredPassword) {
     return __awaiter(this, void 0, void 0, function () {

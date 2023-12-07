@@ -122,7 +122,9 @@ export const activateUser = CatchAsyncError(async(req:Request,res:Response,next:
     }catch (error:any){
         return next(new ErrorHandler(error.message,500));
     }
-})
+});
+
+
 
 
 
