@@ -15,6 +15,7 @@ import * as bcrypt from "bcryptjs";
 import {Secret} from "jsonwebtoken";
 import sendMail from "../util/sendMail";
 import {sendToken} from "../util/jwt";
+import {redis} from "../util/redis";
 
 /**/
 //Register user
@@ -158,10 +159,14 @@ export const loginUser = CatchAsyncError(async(req:Request,res:Response,next:Nex
 });
 
 //Logout user
-export const logoutUser = CatchAsyncError(async(req:Request,res:Response,next:NextFunction)=>{
+export const logoutUser = CatchAsyncError(async(req:any,res:any,next:any)=>{
     try{
         res.cookie("access_token","",{maxAge:1});
         res.cookie("refresh_token","",{maxAge:1});
+
+        const userId =req.user?.id || "";
+        redis.del(userId);
+
         res.status(200).json({
             success:true,
             message:"Logged out successfully",

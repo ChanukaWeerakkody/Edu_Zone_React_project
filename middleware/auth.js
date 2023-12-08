@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isAuthenticated = void 0;
+exports.authorizeRoles = exports.isAuthenticated = void 0;
 var catchAsyncErrors_1 = require("./catchAsyncErrors");
 var ErrorHandler_1 = require("../util/ErrorHandler");
 var redis_1 = require("../util/redis");
@@ -68,3 +68,18 @@ exports.isAuthenticated = (0, catchAsyncErrors_1.CatchAsyncError)(function (req,
         }
     });
 }); });
+//validate user role
+var authorizeRoles = function () {
+    var roles = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        roles[_i] = arguments[_i];
+    }
+    return function (req, res, next) {
+        var _a, _b;
+        if (!roles.includes(((_a = req.user) === null || _a === void 0 ? void 0 : _a.role) || "")) {
+            return next(new ErrorHandler_1.default("Role: ".concat((_b = req.user) === null || _b === void 0 ? void 0 : _b.role, " is not allowed to access this resource"), 403));
+        }
+        next();
+    };
+};
+exports.authorizeRoles = authorizeRoles;

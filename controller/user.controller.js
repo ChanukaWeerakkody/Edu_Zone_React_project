@@ -46,6 +46,7 @@ var jwt = require("jsonwebtoken");
 var ejs = require("ejs");
 var sendMail_1 = require("../util/sendMail");
 var jwt_1 = require("../util/jwt");
+var redis_1 = require("../util/redis");
 exports.registerUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, name_1, email, password, isEmailExist, user_1, activationToken, activationCode, data, html, error_1, error_2;
     return __generator(this, function (_b) {
@@ -178,10 +179,14 @@ exports.loginUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, 
 }); });
 //Logout user
 exports.logoutUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
+    var userId;
+    var _a;
+    return __generator(this, function (_b) {
         try {
             res.cookie("access_token", "", { maxAge: 1 });
             res.cookie("refresh_token", "", { maxAge: 1 });
+            userId = ((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || "";
+            redis_1.redis.del(userId);
             res.status(200).json({
                 success: true,
                 message: "Logged out successfully",
