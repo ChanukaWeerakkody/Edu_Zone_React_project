@@ -7,14 +7,9 @@ import {CatchAsyncError} from "../middleware/catchAsyncErrors";
 import userModel, {IUser} from "../models/user.model";
 import * as jwt from "jsonwebtoken";
 import * as ejs from "ejs";
-
-import user from "../models/user.model";
-
-
-import * as bcrypt from "bcryptjs";
-import {Secret} from "jsonwebtoken";
+import {JwtPayload, Secret} from "jsonwebtoken";
 import sendMail from "../util/sendMail";
-import {sendToken} from "../util/jwt";
+import {accessTokenOptions, refreshTokenOptions, sendToken} from "../util/jwt";
 import {redis} from "../util/redis";
 
 /**/
@@ -125,7 +120,6 @@ export const activateUser = CatchAsyncError(async(req:Request,res:Response,next:
     }
 });
 
-
 //Login user
 interface ILoginRequest{
     email:string;
@@ -159,7 +153,7 @@ export const loginUser = CatchAsyncError(async(req:Request,res:Response,next:Nex
 });
 
 //Logout user
-export const logoutUser = CatchAsyncError(async(req:any,res:any,next:any)=>{
+export const logoutUser = CatchAsyncError(async(req:any,res:Response,next:NextFunction)=>{
     try{
         res.cookie("access_token","",{maxAge:1});
         res.cookie("refresh_token","",{maxAge:1});
@@ -177,6 +171,45 @@ export const logoutUser = CatchAsyncError(async(req:any,res:any,next:any)=>{
     }
 })
 
+//update access token
+export const updateAccessToken = CatchAsyncError(async(req:Request,res:Response,next:NextFunction)=>{
+    try {
+        const refresh_token = req.cookies.refresh_token as string;
+
+        const decoded = jwt.verify(refresh_token,process.env.REFRESH_TOKEN as string) as JwtPayload;
+
+        const message = "Could not refresh token";
+        if (!decoded) {
+            return next(new ErrorHandler(message, 401));
+        }
+
+        const session = await redis.get(decoded.id as string);
+
+        if (!session) {
+            return next(new ErrorHandler(message, 401));
+        }
+
+        const user = JSON.parse(session);
+        const accessToken = jwt.sign({id:user._id},process.env.ACCESS_TOKEN as string,{
+            expiresIn:"5m"
+        })
+
+        const refreshToken = jwt.sign({id:user._id},process.env.REFRESH_TOKEN as string,{
+            expiresIn:"3d"
+        })
+
+        res.cookie("access_token",accessToken,accessTokenOptions);
+        res.cookie("refresh_token",refreshToken,refreshTokenOptions);
+
+        res.status(200).json({
+            success:true,
+            accessToken
+        })
+
+    }catch (error:any) {
+        return next(new ErrorHandler(error.message,500));
+    }
+})
 
 
 

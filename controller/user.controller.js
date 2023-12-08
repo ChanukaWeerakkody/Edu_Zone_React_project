@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.logoutUser = exports.loginUser = exports.activateUser = exports.createActivationToken = exports.registerUser = void 0;
+exports.updateAccessToken = exports.logoutUser = exports.loginUser = exports.activateUser = exports.createActivationToken = exports.registerUser = void 0;
 var path = require("path");
 require('dotenv').config();
 var ErrorHandler_1 = require("../util/ErrorHandler");
@@ -48,7 +48,7 @@ var sendMail_1 = require("../util/sendMail");
 var jwt_1 = require("../util/jwt");
 var redis_1 = require("../util/redis");
 exports.registerUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, name_1, email, password, isEmailExist, user_1, activationToken, activationCode, data, html, error_1, error_2;
+    var _a, name_1, email, password, isEmailExist, user, activationToken, activationCode, data, html, error_1, error_2;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -60,20 +60,20 @@ exports.registerUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, re
                 if (isEmailExist) {
                     return [2 /*return*/, next(new ErrorHandler_1.default("Email already exists", 400))];
                 }
-                user_1 = {
+                user = {
                     name: name_1,
                     email: email,
                     password: password,
                 };
-                activationToken = (0, exports.createActivationToken)(user_1);
+                activationToken = (0, exports.createActivationToken)(user);
                 activationCode = activationToken.activationCode;
-                data = { user: { name: user_1.name }, activationCode: activationCode };
+                data = { user: { name: user.name }, activationCode: activationCode };
                 html = ejs.renderFile(path.join(__dirname, "../mails/activation-mail.ejs"), data);
                 _b.label = 2;
             case 2:
                 _b.trys.push([2, 4, , 5]);
                 return [4 /*yield*/, (0, sendMail_1.default)({
-                        email: user_1.email,
+                        email: user.email,
                         subject: "Activate your account",
                         template: "activation-mail.ejs",
                         data: data,
@@ -82,7 +82,7 @@ exports.registerUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, re
                 _b.sent();
                 res.status(200).json({
                     success: true,
-                    message: "Account created successfully, please check ".concat(user_1.email, " to activate your account"),
+                    message: "Account created successfully, please check ".concat(user.email, " to activate your account"),
                     activationToken: activationToken.token,
                 });
                 return [3 /*break*/, 5];
@@ -109,7 +109,7 @@ var createActivationToken = function (user) {
 };
 exports.createActivationToken = createActivationToken;
 exports.activateUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, activation_token, activation_Code, newUser, _b, name_2, email, password, existUser, user_2, error_3;
+    var _a, activation_token, activation_Code, newUser, _b, name_2, email, password, existUser, user, error_3;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
@@ -132,11 +132,11 @@ exports.activateUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, re
                         password: password
                     })];
             case 2:
-                user_2 = _c.sent();
+                user = _c.sent();
                 res.status(200).json({
                     success: true,
                     message: "Account activated successfully",
-                    user: user_2
+                    user: user
                 });
                 return [3 /*break*/, 4];
             case 3:
@@ -147,7 +147,7 @@ exports.activateUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, re
     });
 }); });
 exports.loginUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, password, user_3, isPasswordMatched, error_4;
+    var _a, email, password, user, isPasswordMatched, error_4;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -158,17 +158,17 @@ exports.loginUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, 
                 }
                 return [4 /*yield*/, user_model_1.default.findOne({ email: email }).select("+password")];
             case 1:
-                user_3 = _b.sent();
-                if (!user_3) {
+                user = _b.sent();
+                if (!user) {
                     return [2 /*return*/, next(new ErrorHandler_1.default("Invalid email or password", 400))];
                 }
-                return [4 /*yield*/, user_3.comparePassword(password)];
+                return [4 /*yield*/, user.comparePassword(password)];
             case 2:
                 isPasswordMatched = _b.sent();
                 if (!isPasswordMatched) {
                     return [2 /*return*/, next(new ErrorHandler_1.default("Invalid email or password", 400))];
                 }
-                (0, jwt_1.sendToken)(user_3, 200, res);
+                (0, jwt_1.sendToken)(user, 200, res);
                 return [3 /*break*/, 4];
             case 3:
                 error_4 = _b.sent();
@@ -196,5 +196,45 @@ exports.logoutUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res,
             return [2 /*return*/, next(new ErrorHandler_1.default(error.message, 500))];
         }
         return [2 /*return*/];
+    });
+}); });
+//update access token
+exports.updateAccessToken = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var refresh_token, decoded, message, session, user, accessToken, refreshToken, error_5;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                refresh_token = req.cookies.refresh_token;
+                decoded = jwt.verify(refresh_token, process.env.REFRESH_TOKEN);
+                message = "Could not refresh token";
+                if (!decoded) {
+                    return [2 /*return*/, next(new ErrorHandler_1.default(message, 401))];
+                }
+                return [4 /*yield*/, redis_1.redis.get(decoded.id)];
+            case 1:
+                session = _a.sent();
+                if (!session) {
+                    return [2 /*return*/, next(new ErrorHandler_1.default(message, 401))];
+                }
+                user = JSON.parse(session);
+                accessToken = jwt.sign({ id: user._id }, process.env.ACCESS_TOKEN, {
+                    expiresIn: "5m"
+                });
+                refreshToken = jwt.sign({ id: user._id }, process.env.REFRESH_TOKEN, {
+                    expiresIn: "3d"
+                });
+                res.cookie("access_token", accessToken, jwt_1.accessTokenOptions);
+                res.cookie("refresh_token", refreshToken, jwt_1.refreshTokenOptions);
+                res.status(200).json({
+                    success: true,
+                    accessToken: accessToken
+                });
+                return [3 /*break*/, 3];
+            case 2:
+                error_5 = _a.sent();
+                return [2 /*return*/, next(new ErrorHandler_1.default(error_5.message, 500))];
+            case 3: return [2 /*return*/];
+        }
     });
 }); });
