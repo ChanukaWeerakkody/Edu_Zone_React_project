@@ -16,8 +16,7 @@ import {Secret} from "jsonwebtoken";
 import sendMail from "../util/sendMail";
 import {sendToken} from "../util/jwt";
 
-
-
+/**/
 //Register user
 interface IRegistrationBody{
     name:string;
