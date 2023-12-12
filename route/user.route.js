@@ -9,4 +9,5 @@ userRouter.post("/login", user_controller_1.loginUser);
 userRouter.get("/logout", user_controller_1.logoutUser);
 userRouter.get("/refreshToken", user_controller_1.updateAccessToken);
 userRouter.get("/me", user_controller_1.getUserInfo);
+userRouter.post("/socialAuth", user_controller_1.socialAuth);
 exports.default = userRouter;

@@ -31,7 +31,7 @@ export const refreshTokenOptions:ITokenOptions = {
 }
 
 
-export const sendToken = (user:IUser,statusCode:number,res:Response)=>{
+export const sendToken = (user,statusCode:number,res:Response)=>{
     const accessToken = user.signAccessToken();
     const refreshToken = user.signRefreshToken();
 

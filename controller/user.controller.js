@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserInfo = exports.updateAccessToken = exports.logoutUser = exports.loginUser = exports.activateUser = exports.createActivationToken = exports.registerUser = void 0;
+exports.socialAuth = exports.getUserInfo = exports.updateAccessToken = exports.logoutUser = exports.loginUser = exports.activateUser = exports.createActivationToken = exports.registerUser = void 0;
 var path = require("path");
 require('dotenv').config();
 var ErrorHandler_1 = require("../util/ErrorHandler");
@@ -247,14 +247,38 @@ exports.getUserInfo = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res
         try {
             userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
             (0, user_service_1.getUserById)(userId, res);
-            /*res.status(200).json({
-                success:true,
-                userId
-            })*/
         }
         catch (error) {
             return [2 /*return*/, next(new ErrorHandler_1.default(error.message, 500))];
         }
         return [2 /*return*/];
+    });
+}); });
+//social auth
+exports.socialAuth = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, email, name_3, avatar, user, newUser, error_6;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 5, , 6]);
+                _a = req.body, email = _a.email, name_3 = _a.name, avatar = _a.avatar;
+                return [4 /*yield*/, user_model_1.default.findOne({ email: email })];
+            case 1:
+                user = _b.sent();
+                if (!!user) return [3 /*break*/, 3];
+                return [4 /*yield*/, user_model_1.default.create({ name: name_3, email: email, avatar: avatar })];
+            case 2:
+                newUser = _b.sent();
+                (0, jwt_1.sendToken)(newUser, 200, res);
+                return [3 /*break*/, 4];
+            case 3:
+                (0, jwt_1.sendToken)(user, 200, res);
+                _b.label = 4;
+            case 4: return [3 /*break*/, 6];
+            case 5:
+                error_6 = _b.sent();
+                return [2 /*return*/, next(new ErrorHandler_1.default(error_6.message, 500))];
+            case 6: return [2 /*return*/];
+        }
     });
 }); });
