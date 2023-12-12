@@ -173,7 +173,7 @@ export const logoutUser = CatchAsyncError(async(req:any,res:Response,next:NextFu
 })
 
 //update access token
-export const updateAccessToken = CatchAsyncError(async(req:Request,res:Response,next:NextFunction)=>{
+export const updateAccessToken = CatchAsyncError(async(req:any,res:Response,next:NextFunction)=>{
     try {
         const refresh_token = req.cookies.refresh_token as string;
 
@@ -198,6 +198,8 @@ export const updateAccessToken = CatchAsyncError(async(req:Request,res:Response,
         const refreshToken = jwt.sign({id:user._id},process.env.REFRESH_TOKEN as string,{
             expiresIn:"3d"
         })
+
+        req.user = user;
 
         res.cookie("access_token",accessToken,accessTokenOptions);
         res.cookie("refresh_token",refreshToken,refreshTokenOptions);
@@ -244,6 +246,39 @@ export const socialAuth = CatchAsyncError(async(req:Request,res:Response,next:Ne
     }
 })
 
+//update user info
+interface IUpdateUserInfo{
+    name?:string;
+    email?:string;
+}
+
+export const updateUserInfo = CatchAsyncError(async(req:any,res:Response,next:NextFunction)=>{
+    try {
+        const userId = req.user?._id;
+        const {name,email} = req.body as IUpdateUserInfo;
+        const user = await userModel.findById(userId);
+
+        if(email && user){
+            const isEmailExist = await userModel.findOne({email});
+            if(isEmailExist){
+                return next(new ErrorHandler("Email already exists",400));
+            }
+            user.email = email;
+        }
+        if(name && user){
+            user.name = name;
+        }
+        await user?.save();
+        await redis.set(userId,JSON.stringify(user));
+
+        res.status(201).json({
+            success:true,
+            user
+        })
+    }catch (error:any){
+        return next(new ErrorHandler(error.message,500));
+    }
+})
 
 
 

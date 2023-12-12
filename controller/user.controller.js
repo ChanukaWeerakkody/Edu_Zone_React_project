@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.socialAuth = exports.getUserInfo = exports.updateAccessToken = exports.logoutUser = exports.loginUser = exports.activateUser = exports.createActivationToken = exports.registerUser = void 0;
+exports.updateUserInfo = exports.socialAuth = exports.getUserInfo = exports.updateAccessToken = exports.logoutUser = exports.loginUser = exports.activateUser = exports.createActivationToken = exports.registerUser = void 0;
 var path = require("path");
 require('dotenv').config();
 var ErrorHandler_1 = require("../util/ErrorHandler");
@@ -225,6 +225,7 @@ exports.updateAccessToken = (0, catchAsyncErrors_1.CatchAsyncError)(function (re
                 refreshToken = jwt.sign({ id: user._id }, process.env.REFRESH_TOKEN, {
                     expiresIn: "3d"
                 });
+                req.user = user;
                 res.cookie("access_token", accessToken, jwt_1.accessTokenOptions);
                 res.cookie("refresh_token", refreshToken, jwt_1.refreshTokenOptions);
                 res.status(200).json({
@@ -279,6 +280,49 @@ exports.socialAuth = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res,
                 error_6 = _b.sent();
                 return [2 /*return*/, next(new ErrorHandler_1.default(error_6.message, 500))];
             case 6: return [2 /*return*/];
+        }
+    });
+}); });
+exports.updateUserInfo = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var userId, _a, name_4, email, user, isEmailExist, error_7;
+    var _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                _c.trys.push([0, 6, , 7]);
+                userId = (_b = req.user) === null || _b === void 0 ? void 0 : _b._id;
+                _a = req.body, name_4 = _a.name, email = _a.email;
+                return [4 /*yield*/, user_model_1.default.findById(userId)];
+            case 1:
+                user = _c.sent();
+                if (!(email && user)) return [3 /*break*/, 3];
+                return [4 /*yield*/, user_model_1.default.findOne({ email: email })];
+            case 2:
+                isEmailExist = _c.sent();
+                if (isEmailExist) {
+                    return [2 /*return*/, next(new ErrorHandler_1.default("Email already exists", 400))];
+                }
+                user.email = email;
+                _c.label = 3;
+            case 3:
+                if (name_4 && user) {
+                    user.name = name_4;
+                }
+                return [4 /*yield*/, (user === null || user === void 0 ? void 0 : user.save())];
+            case 4:
+                _c.sent();
+                return [4 /*yield*/, redis_1.redis.set(userId, JSON.stringify(user))];
+            case 5:
+                _c.sent();
+                res.status(201).json({
+                    success: true,
+                    user: user
+                });
+                return [3 /*break*/, 7];
+            case 6:
+                error_7 = _c.sent();
+                return [2 /*return*/, next(new ErrorHandler_1.default(error_7.message, 500))];
+            case 7: return [2 /*return*/];
         }
     });
 }); });
