@@ -11,6 +11,7 @@ import {JwtPayload, Secret} from "jsonwebtoken";
 import sendMail from "../util/sendMail";
 import {accessTokenOptions, refreshTokenOptions, sendToken} from "../util/jwt";
 import {redis} from "../util/redis";
+import {getUserById} from "../services/user.service";
 
 /**/
 //Register user
@@ -211,6 +212,15 @@ export const updateAccessToken = CatchAsyncError(async(req:Request,res:Response,
     }
 })
 
+//get user info
+export const getUserInfo = CatchAsyncError(async(req:any,res:Response,next:NextFunction)=>{
+    try {
+        const userId = req.user?._id;
+        getUserById(userId,res);
+    }catch (error:any){
+        return next(new ErrorHandler(error.message,500));
+    }
+})
 
 
 

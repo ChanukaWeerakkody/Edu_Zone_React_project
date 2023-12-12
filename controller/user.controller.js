@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateAccessToken = exports.logoutUser = exports.loginUser = exports.activateUser = exports.createActivationToken = exports.registerUser = void 0;
+exports.getUserInfo = exports.updateAccessToken = exports.logoutUser = exports.loginUser = exports.activateUser = exports.createActivationToken = exports.registerUser = void 0;
 var path = require("path");
 require('dotenv').config();
 var ErrorHandler_1 = require("../util/ErrorHandler");
@@ -47,6 +47,7 @@ var ejs = require("ejs");
 var sendMail_1 = require("../util/sendMail");
 var jwt_1 = require("../util/jwt");
 var redis_1 = require("../util/redis");
+var user_service_1 = require("../services/user.service");
 exports.registerUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, name_1, email, password, isEmailExist, user, activationToken, activationCode, data, html, error_1, error_2;
     return __generator(this, function (_b) {
@@ -236,5 +237,24 @@ exports.updateAccessToken = (0, catchAsyncErrors_1.CatchAsyncError)(function (re
                 return [2 /*return*/, next(new ErrorHandler_1.default(error_5.message, 500))];
             case 3: return [2 /*return*/];
         }
+    });
+}); });
+//get user info
+exports.getUserInfo = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var userId;
+    var _a;
+    return __generator(this, function (_b) {
+        try {
+            userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+            (0, user_service_1.getUserById)(userId, res);
+            /*res.status(200).json({
+                success:true,
+                userId
+            })*/
+        }
+        catch (error) {
+            return [2 /*return*/, next(new ErrorHandler_1.default(error.message, 500))];
+        }
+        return [2 /*return*/];
     });
 }); });
