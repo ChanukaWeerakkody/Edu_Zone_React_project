@@ -36,37 +36,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.uploadCourse = void 0;
+exports.createCourse = void 0;
+var course_model_1 = require("../models/course.model");
 var catchAsyncErrors_1 = require("../middleware/catchAsyncErrors");
-var ErrorHandler_1 = require("../util/ErrorHandler");
-var cloudinary = require("cloudinary");
-var course_service_1 = require("../services/course.service");
-exports.uploadCourse = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var data, thumbnail, myCloud, err_1;
+//create course
+exports.createCourse = (0, catchAsyncErrors_1.CatchAsyncError)(function (data, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var course;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 3, , 4]);
-                data = req.body;
-                thumbnail = data.thumbnail;
-                if (!thumbnail) return [3 /*break*/, 2];
-                return [4 /*yield*/, cloudinary.v2.uploader.upload(thumbnail, {
-                        folder: "courses"
-                    })];
+            case 0: return [4 /*yield*/, course_model_1.default.create(data)];
             case 1:
-                myCloud = _a.sent();
-                data.thumbnail = {
-                    public_id: myCloud.public_id,
-                    url: myCloud.secure_url
-                };
-                _a.label = 2;
-            case 2:
-                (0, course_service_1.createCourse)(data, res, next);
-                return [3 /*break*/, 4];
-            case 3:
-                err_1 = _a.sent();
-                return [2 /*return*/, next(new ErrorHandler_1.default(err_1.message, 500))];
-            case 4: return [2 /*return*/];
+                course = _a.sent();
+                res.status(200).json({
+                    success: true,
+                    course: course
+                });
+                return [2 /*return*/];
         }
     });
 }); });

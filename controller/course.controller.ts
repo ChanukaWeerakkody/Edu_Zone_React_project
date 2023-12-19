@@ -2,6 +2,7 @@ import {NextFunction,Request,Response} from "express";
 import {CatchAsyncError} from "../middleware/catchAsyncErrors";
 import ErrorHandler from "../util/ErrorHandler";
 import * as cloudinary from 'cloudinary';
+import {createCourse} from "../services/course.service";
 
 
 export const uploadCourse = CatchAsyncError(async (req:Request,res:Response,next:NextFunction)=>{
@@ -19,6 +20,7 @@ export const uploadCourse = CatchAsyncError(async (req:Request,res:Response,next
                 url:myCloud.secure_url
             }
         }
+        createCourse(data,res,next);
     }catch (err:any){
         return next(new ErrorHandler(err.message,500));
     }
