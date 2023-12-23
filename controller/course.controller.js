@@ -36,12 +36,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateCourse = exports.uploadCourse = void 0;
+exports.getSingleCourse = exports.updateCourse = exports.uploadCourse = void 0;
 var catchAsyncErrors_1 = require("../middleware/catchAsyncErrors");
 var ErrorHandler_1 = require("../util/ErrorHandler");
 var cloudinary = require("cloudinary");
 var course_service_1 = require("../services/course.service");
 var course_model_1 = require("../models/course.model");
+//add course
 exports.uploadCourse = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var data, thumbnail, myCloud, err_1;
     return __generator(this, function (_a) {
@@ -111,6 +112,28 @@ exports.updateCourse = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, re
                 err_2 = _a.sent();
                 return [2 /*return*/, next(new ErrorHandler_1.default(err_2.message, 500))];
             case 6: return [2 /*return*/];
+        }
+    });
+}); });
+//get single course
+exports.getSingleCourse = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var course, err_3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, course_model_1.default.findById(req.params.id).select("-courseData.videoUrl -courseData.suggestions -courseData.questions -courseData.links")];
+            case 1:
+                course = _a.sent();
+                res.status(200).json({
+                    success: true,
+                    course: course
+                });
+                return [3 /*break*/, 3];
+            case 2:
+                err_3 = _a.sent();
+                return [2 /*return*/, next(new ErrorHandler_1.default(err_3.message, 500))];
+            case 3: return [2 /*return*/];
         }
     });
 }); });
