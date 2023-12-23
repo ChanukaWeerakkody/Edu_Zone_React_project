@@ -6,6 +6,7 @@ import * as express from "express";
 export const app = express();
 
 import userRouter from "./route/user.route";
+import courseRouter from "./route/course.route";
 import * as cors from "cors";
 import {ErrorMiddleware} from "./middleware/error";
 import {registerUser} from "./controller/user.controller";
@@ -24,6 +25,7 @@ app.use(cors({
 
 //Routes
 app.use('/api/v1', userRouter);
+app.use('/api/v1', courseRouter);
 
 //testing api
 app.get("/test", (req: Request, res: Response, next: NextFunction) => {

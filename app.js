@@ -6,6 +6,7 @@ require('dotenv').config();
 var express = require("express");
 exports.app = express();
 var user_route_1 = require("./route/user.route");
+var course_route_1 = require("./route/course.route");
 var cors = require("cors");
 var error_1 = require("./middleware/error");
 //body parser
@@ -18,20 +19,13 @@ exports.app.use(cors({
 }));
 //Routes
 exports.app.use('/api/v1', user_route_1.default);
+exports.app.use('/api/v1', course_route_1.default);
 //testing api
 exports.app.get("/test", function (req, res, next) {
     res.status(200).json({
         message: "Test route successful",
     });
 });
-/*
-app.post('/api/v1/registration', (req, res) => {
-   /!* res.status(200).json({
-        message: "Find Route successful",
-    });*!/
-    app.use("/api/v1", userRouter);
-});
-*/
 //unknown route
 exports.app.all("*", function (req, res, next) {
     var err = new Error("Route ".concat(req.originalUrl, " not found"));

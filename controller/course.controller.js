@@ -36,11 +36,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.uploadCourse = void 0;
+exports.updateCourse = exports.uploadCourse = void 0;
 var catchAsyncErrors_1 = require("../middleware/catchAsyncErrors");
 var ErrorHandler_1 = require("../util/ErrorHandler");
 var cloudinary = require("cloudinary");
 var course_service_1 = require("../services/course.service");
+var course_model_1 = require("../models/course.model");
 exports.uploadCourse = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var data, thumbnail, myCloud, err_1;
     return __generator(this, function (_a) {
@@ -67,6 +68,49 @@ exports.uploadCourse = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, re
                 err_1 = _a.sent();
                 return [2 /*return*/, next(new ErrorHandler_1.default(err_1.message, 500))];
             case 4: return [2 /*return*/];
+        }
+    });
+}); });
+//update course
+exports.updateCourse = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var data, thumbnail, myCloud, courseId, course, err_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 5, , 6]);
+                data = req.body;
+                thumbnail = data.thumbnail;
+                if (!thumbnail) return [3 /*break*/, 3];
+                return [4 /*yield*/, cloudinary.v2.uploader.destroy(data.thumbnail.public_id)];
+            case 1:
+                _a.sent();
+                return [4 /*yield*/, cloudinary.v2.uploader.upload(thumbnail, {
+                        folder: "courses"
+                    })];
+            case 2:
+                myCloud = _a.sent();
+                data.thumbnail = {
+                    public_id: myCloud.public_id,
+                    url: myCloud.secure_url
+                };
+                _a.label = 3;
+            case 3:
+                courseId = req.params.id;
+                return [4 /*yield*/, course_model_1.default.findByIdAndUpdate(courseId, {
+                        $set: data
+                    }, { new: true
+                    })];
+            case 4:
+                course = _a.sent();
+                res.status(200).json({
+                    success: true,
+                    course: course
+                });
+                return [3 /*break*/, 6];
+            case 5:
+                err_2 = _a.sent();
+                return [2 /*return*/, next(new ErrorHandler_1.default(err_2.message, 500))];
+            case 6: return [2 /*return*/];
         }
     });
 }); });

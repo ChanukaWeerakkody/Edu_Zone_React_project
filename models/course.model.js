@@ -21,7 +21,6 @@ var commentSchema = new mongoose_2.Schema({
 });
 var courseDataSchema = new mongoose_2.Schema({
     videoUrl: String,
-    videoThumbnail: Object,
     title: String,
     videoSection: String,
     description: String,
@@ -50,11 +49,9 @@ var courseSchema = new mongoose_2.Schema({
     thumbnail: {
         public_id: {
             type: String,
-            required: true,
         },
         url: {
             type: String,
-            required: true,
         },
     },
     tags: {
