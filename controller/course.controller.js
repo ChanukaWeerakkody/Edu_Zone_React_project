@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSingleCourse = exports.updateCourse = exports.uploadCourse = void 0;
+exports.getAllCourses = exports.getSingleCourse = exports.updateCourse = exports.uploadCourse = void 0;
 var catchAsyncErrors_1 = require("../middleware/catchAsyncErrors");
 var ErrorHandler_1 = require("../util/ErrorHandler");
 var cloudinary = require("cloudinary");
@@ -133,6 +133,28 @@ exports.getSingleCourse = (0, catchAsyncErrors_1.CatchAsyncError)(function (req,
             case 2:
                 err_3 = _a.sent();
                 return [2 /*return*/, next(new ErrorHandler_1.default(err_3.message, 500))];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+//get all courses without purchased
+exports.getAllCourses = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var courses, err_4;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, course_model_1.default.find().select("-courseData.videoUrl -courseData.suggestions -courseData.questions -courseData.links")];
+            case 1:
+                courses = _a.sent();
+                res.status(200).json({
+                    success: true,
+                    courses: courses
+                });
+                return [3 /*break*/, 3];
+            case 2:
+                err_4 = _a.sent();
+                return [2 /*return*/, next(new ErrorHandler_1.default(err_4.message, 500))];
             case 3: return [2 /*return*/];
         }
     });

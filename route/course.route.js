@@ -6,4 +6,5 @@ var courseRouter = express.Router();
 courseRouter.post("/create-course", course_controller_1.uploadCourse);
 courseRouter.put("/edit-course/:id", course_controller_1.updateCourse);
 courseRouter.get("/get-course/:id", course_controller_1.getSingleCourse);
+courseRouter.get("/get-courses", course_controller_1.getAllCourses);
 exports.default = courseRouter;
