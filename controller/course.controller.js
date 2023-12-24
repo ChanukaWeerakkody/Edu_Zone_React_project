@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllCourses = exports.getSingleCourse = exports.updateCourse = exports.uploadCourse = void 0;
+exports.getCourseByUser = exports.getAllCourses = exports.getSingleCourse = exports.updateCourse = exports.uploadCourse = void 0;
 var catchAsyncErrors_1 = require("../middleware/catchAsyncErrors");
 var ErrorHandler_1 = require("../util/ErrorHandler");
 var cloudinary = require("cloudinary");
@@ -155,6 +155,36 @@ exports.getAllCourses = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, r
             case 2:
                 err_4 = _a.sent();
                 return [2 /*return*/, next(new ErrorHandler_1.default(err_4.message, 500))];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+//get all course content only valid user
+exports.getCourseByUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var userCourseList, courseId_1, courseExists, course, content, err_5;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 2, , 3]);
+                userCourseList = (_a = req.user) === null || _a === void 0 ? void 0 : _a.courses;
+                courseId_1 = req.params.id;
+                courseExists = userCourseList === null || userCourseList === void 0 ? void 0 : userCourseList.find(function (course) { return course._id == courseId_1; });
+                if (!courseExists) {
+                    return [2 /*return*/, next(new ErrorHandler_1.default("You are not eligible to access this course", 404))];
+                }
+                return [4 /*yield*/, course_model_1.default.findById(courseId_1)];
+            case 1:
+                course = _b.sent();
+                content = course === null || course === void 0 ? void 0 : course.courseData;
+                res.status(200).json({
+                    success: true,
+                    course: course
+                });
+                return [3 /*break*/, 3];
+            case 2:
+                err_5 = _b.sent();
+                return [2 /*return*/, next(new ErrorHandler_1.default(err_5.message, 500))];
             case 3: return [2 /*return*/];
         }
     });
