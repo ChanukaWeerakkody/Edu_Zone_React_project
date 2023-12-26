@@ -52,7 +52,7 @@ exports.createOrder = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _b.trys.push([0, 10, , 11]);
+                _b.trys.push([0, 11, , 12]);
                 _a = req.body, courseId_1 = _a.courseId, payment_info = _a.payment_info;
                 return [4 /*yield*/, user_model_1.default.findById('65717e56cb7f7d716169bbea')];
             case 1:
@@ -110,12 +110,18 @@ exports.createOrder = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res
                     })];
             case 9:
                 notification = _b.sent();
-                (0, order_service_1.newOrder)(data, res, next);
-                return [3 /*break*/, 11];
+                if (notification) {
+                    course.purchased += 1;
+                }
+                return [4 /*yield*/, course.save()];
             case 10:
+                _b.sent();
+                (0, order_service_1.newOrder)(data, res, next);
+                return [3 /*break*/, 12];
+            case 11:
                 err_2 = _b.sent();
                 return [2 /*return*/, next(new ErrorHandler_1.default(err_2.message, 500))];
-            case 11: return [2 /*return*/];
+            case 12: return [2 /*return*/];
         }
     });
 }); });

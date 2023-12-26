@@ -68,6 +68,10 @@ export const createOrder = CatchAsyncError(async (req:any,res:Response,next:Next
             message: `You have a new order from ${course?.name} course`
         })
 
+        if(notification){
+            course.purchased += 1;
+        }
+        await course.save();
 
         newOrder(data,res,next);
 
