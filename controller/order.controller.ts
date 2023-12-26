@@ -31,8 +31,7 @@ export const createOrder = CatchAsyncError(async (req:any,res:Response,next:Next
 
         const data:any ={
             courseId:courseId,
-            /*userId: user?._id,*/
-            userId: '65717e56cb7f7d716169bbea',
+            userId: user?._id,
             payment_info
         }
 

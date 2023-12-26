@@ -69,8 +69,7 @@ exports.createOrder = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res
                 }
                 data = {
                     courseId: courseId_1,
-                    /*userId: user?._id,*/
-                    userId: '65717e56cb7f7d716169bbea',
+                    userId: user === null || user === void 0 ? void 0 : user._id,
                     payment_info: payment_info
                 };
                 mailData = {
