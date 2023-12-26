@@ -49,28 +49,28 @@ var order_service_1 = require("../services/order.service");
 //create order
 exports.createOrder = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, courseId_1, payment_info, user, courseExistInUser, course, data, mailData, html, err_1, notification, err_2;
-    var _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                _c.trys.push([0, 10, , 11]);
+                _b.trys.push([0, 10, , 11]);
                 _a = req.body, courseId_1 = _a.courseId, payment_info = _a.payment_info;
-                return [4 /*yield*/, user_model_1.default.findById((_b = req.user) === null || _b === void 0 ? void 0 : _b._id)];
+                return [4 /*yield*/, user_model_1.default.findById('65717e56cb7f7d716169bbea')];
             case 1:
-                user = _c.sent();
+                user = _b.sent();
                 courseExistInUser = user === null || user === void 0 ? void 0 : user.courses.some(function (course) { return course._id.toString() === courseId_1; });
                 if (courseExistInUser) {
                     return [2 /*return*/, next(new ErrorHandler_1.default("You have already purchased this course", 400))];
                 }
                 return [4 /*yield*/, course_model_1.default.findById(courseId_1)];
             case 2:
-                course = _c.sent();
+                course = _b.sent();
                 if (!course) {
                     return [2 /*return*/, next(new ErrorHandler_1.default("Course not found", 404))];
                 }
                 data = {
                     courseId: courseId_1,
-                    userId: user === null || user === void 0 ? void 0 : user._id,
+                    /*userId: user?._id,*/
+                    userId: '65717e56cb7f7d716169bbea',
                     payment_info: payment_info
                 };
                 mailData = {
@@ -82,9 +82,9 @@ exports.createOrder = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res
                     }
                 };
                 html = ejs.renderFile(path.join(__dirname, '../mails/order-confirmation.ejs'), { order: mailData });
-                _c.label = 3;
+                _b.label = 3;
             case 3:
-                _c.trys.push([3, 6, , 7]);
+                _b.trys.push([3, 6, , 7]);
                 if (!user) return [3 /*break*/, 5];
                 return [4 /*yield*/, (0, sendMail_1.default)({
                         email: user.email,
@@ -93,28 +93,28 @@ exports.createOrder = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res
                         data: mailData
                     })];
             case 4:
-                _c.sent();
-                _c.label = 5;
+                _b.sent();
+                _b.label = 5;
             case 5: return [3 /*break*/, 7];
             case 6:
-                err_1 = _c.sent();
+                err_1 = _b.sent();
                 return [2 /*return*/, next(new ErrorHandler_1.default(err_1.message, 500))];
             case 7:
                 user === null || user === void 0 ? void 0 : user.courses.push(course === null || course === void 0 ? void 0 : course._id);
                 return [4 /*yield*/, (user === null || user === void 0 ? void 0 : user.save())];
             case 8:
-                _c.sent();
+                _b.sent();
                 return [4 /*yield*/, notificationModel_1.default.create({
                         userId: user === null || user === void 0 ? void 0 : user._id,
                         title: "New Order",
                         message: "You have a new order from ".concat(course === null || course === void 0 ? void 0 : course.name, " course")
                     })];
             case 9:
-                notification = _c.sent();
+                notification = _b.sent();
                 (0, order_service_1.newOrder)(data, res, next);
                 return [3 /*break*/, 11];
             case 10:
-                err_2 = _c.sent();
+                err_2 = _b.sent();
                 return [2 /*return*/, next(new ErrorHandler_1.default(err_2.message, 500))];
             case 11: return [2 /*return*/];
         }

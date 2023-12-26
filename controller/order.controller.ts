@@ -11,11 +11,13 @@ import NotificationModel from "../models/notificationModel";
 import userModel from "../models/user.model";
 import {newOrder} from "../services/order.service";
 
+
 //create order
 export const createOrder = CatchAsyncError(async (req:any,res:Response,next:NextFunction)=>{
     try{
         const {courseId, payment_info} = req.body as IOrder;
-        const user = await userModel.findById(req.user?._id);
+        /*const user = await userModel.findById(req.user?._id);*/
+        const user = await userModel.findById('65717e56cb7f7d716169bbea');
         const courseExistInUser = user?.courses.some((course:any)=> course._id.toString() === courseId);
 
         if(courseExistInUser){
@@ -29,7 +31,8 @@ export const createOrder = CatchAsyncError(async (req:any,res:Response,next:Next
 
         const data:any ={
             courseId:courseId,
-            userId: user?._id,
+            /*userId: user?._id,*/
+            userId: '65717e56cb7f7d716169bbea',
             payment_info
         }
 
