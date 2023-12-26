@@ -9,6 +9,7 @@ import ejs from "ejs";
 import sendMail from "../util/sendMail";
 import NotificationModel from "../models/notificationModel";
 import userModel from "../models/user.model";
+import {newOrder} from "../services/order.service";
 
 //create order
 export const createOrder = CatchAsyncError(async (req:Request,res:Response,next:NextFunction)=>{
@@ -30,6 +31,19 @@ export const createOrder = CatchAsyncError(async (req:Request,res:Response,next:
             courseId:courseId,
             userId: user?._id,
         }
+
+        newOrder(data,res,next);
+
+        const mailData = {
+            order: {
+                _id:course._id.slice(0,6),
+                name:course.name,
+                price:course.price,
+                date : new Date().toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'}),
+            }
+        }
+
+        const html = ejs.renderFile(path.join(__dirname,'../mails/order-confirmation.ejs'),mailData);
 
         res.status(200).json({
             success:true,
