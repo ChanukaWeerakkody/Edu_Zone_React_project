@@ -14,3 +14,5 @@ var orderSchema = new mongoose_1.Schema({
         //required:true
     }
 }, { timestamps: true });
+var OrderModel = mongoose_1.default.model("Order", orderSchema);
+exports.default = OrderModel;

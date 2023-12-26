@@ -36,28 +36,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var mongoose = require("mongoose");
-require('dotenv').config();
-var dbUrl = process.env.DB_URL || '';
-var connectDB = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var error_1;
+exports.newOrder = void 0;
+var catchAsyncErrors_1 = require("../middleware/catchAsyncErrors");
+var orderModel_1 = require("../models/orderModel");
+//create new order
+exports.newOrder = (0, catchAsyncErrors_1.CatchAsyncError)(function (data, next, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var order;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, mongoose.connect(dbUrl).then(function (data) {
-                        console.log("Database connected with ".concat(data.connection.host));
-                    })];
+            case 0: return [4 /*yield*/, orderModel_1.default.create(data)];
             case 1:
-                _a.sent();
-                return [3 /*break*/, 3];
-            case 2:
-                error_1 = _a.sent();
-                console.log(error_1.message);
-                setTimeout(connectDB, 5000);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+                order = _a.sent();
+                res.status(201).json({
+                    success: true,
+                    order: order,
+                });
+                return [2 /*return*/];
         }
     });
-}); };
-exports.default = connectDB;
+}); });
