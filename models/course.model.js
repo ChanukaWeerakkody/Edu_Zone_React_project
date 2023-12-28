@@ -78,6 +78,6 @@ var courseSchema = new mongoose_2.Schema({
         type: Number,
         default: 0,
     }
-});
+}, { timestamps: true });
 var CourseModel = mongoose_1.default.model("Course", courseSchema);
 exports.default = CourseModel;
