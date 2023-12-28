@@ -40,6 +40,7 @@ exports.updateNotification = exports.getNotifications = void 0;
 var notificationModel_1 = require("../models/notificationModel");
 var catchAsyncErrors_1 = require("../middleware/catchAsyncErrors");
 var ErrorHandler_1 = require("../util/ErrorHandler");
+var cron = require("node-cron");
 //get all notifications ->only for admin
 exports.getNotifications = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var notification, err_1;
@@ -96,3 +97,8 @@ exports.updateNotification = (0, catchAsyncErrors_1.CatchAsyncError)(function (r
         }
     });
 }); });
+//delete notification ->only for admin
+cron.schedule("*/5 * * * * *", function () {
+    console.log("---------------------------");
+    console.log("running a task every 5 seconds");
+});
