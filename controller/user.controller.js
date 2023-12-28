@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUserInfo = exports.socialAuth = exports.getUserInfo = exports.updateAccessToken = exports.logoutUser = exports.loginUser = exports.activateUser = exports.createActivationToken = exports.registerUser = void 0;
+exports.getAllUsers = exports.updateUserInfo = exports.socialAuth = exports.getUserInfo = exports.updateAccessToken = exports.logoutUser = exports.loginUser = exports.activateUser = exports.createActivationToken = exports.registerUser = void 0;
 var path = require("path");
 require('dotenv').config();
 var ErrorHandler_1 = require("../util/ErrorHandler");
@@ -324,5 +324,17 @@ exports.updateUserInfo = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, 
                 return [2 /*return*/, next(new ErrorHandler_1.default(error_7.message, 500))];
             case 7: return [2 /*return*/];
         }
+    });
+}); });
+//get all users ->only for admin
+exports.getAllUsers = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        try {
+            (0, user_service_1.getAllUserService)(res);
+        }
+        catch (error) {
+            return [2 /*return*/, next(new ErrorHandler_1.default(error.message, 500))];
+        }
+        return [2 /*return*/];
     });
 }); });

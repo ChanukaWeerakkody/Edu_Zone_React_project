@@ -11,7 +11,7 @@ import {JwtPayload, Secret} from "jsonwebtoken";
 import sendMail from "../util/sendMail";
 import {accessTokenOptions, refreshTokenOptions, sendToken} from "../util/jwt";
 import {redis} from "../util/redis";
-import {getUserById} from "../services/user.service";
+import {getAllUserService, getUserById} from "../services/user.service";
 
 /**/
 //Register user
@@ -280,6 +280,14 @@ export const updateUserInfo = CatchAsyncError(async(req:any,res:Response,next:Ne
     }
 })
 
+//get all users ->only for admin
+export const getAllUsers = CatchAsyncError(async(req:any,res:Response,next:NextFunction)=>{
+    try {
+        getAllUserService(res);
+    }catch (error:any){
+        return next(new ErrorHandler(error.message,500));
+    }
+});
 
 
 

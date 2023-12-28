@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createCourse = void 0;
+exports.getAllCourseService = exports.createCourse = void 0;
 var course_model_1 = require("../models/course.model");
 var catchAsyncErrors_1 = require("../middleware/catchAsyncErrors");
 //create course
@@ -55,3 +55,20 @@ exports.createCourse = (0, catchAsyncErrors_1.CatchAsyncError)(function (data, r
         }
     });
 }); });
+//get all course
+var getAllCourseService = function (res) { return __awaiter(void 0, void 0, void 0, function () {
+    var courses;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, course_model_1.default.find().sort({ createdAt: -1 })];
+            case 1:
+                courses = _a.sent();
+                res.status(201).json({
+                    success: true,
+                    courses: courses
+                });
+                return [2 /*return*/];
+        }
+    });
+}); };
+exports.getAllCourseService = getAllCourseService;

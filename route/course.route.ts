@@ -1,6 +1,6 @@
 import * as express from "express";
 import {
-    getAllCourses,
+    getAllCourses, getAllCoursesService,
     getCourseByUser,
     getSingleCourse,
     updateCourse,
@@ -15,6 +15,7 @@ courseRouter.put("/edit-course/:id",updateCourse);
 courseRouter.get("/get-course/:id",getSingleCourse);
 courseRouter.get("/get-courses",getAllCourses);
 courseRouter.get("/get-course-content/:id",getCourseByUser);
+courseRouter.get("/getAll-courses",getAllCoursesService);
 
 export default courseRouter;
 

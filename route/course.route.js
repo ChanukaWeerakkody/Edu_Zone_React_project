@@ -8,4 +8,5 @@ courseRouter.put("/edit-course/:id", course_controller_1.updateCourse);
 courseRouter.get("/get-course/:id", course_controller_1.getSingleCourse);
 courseRouter.get("/get-courses", course_controller_1.getAllCourses);
 courseRouter.get("/get-course-content/:id", course_controller_1.getCourseByUser);
+courseRouter.get("/getAll-courses", course_controller_1.getAllCoursesService);
 exports.default = courseRouter;

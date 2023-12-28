@@ -36,8 +36,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserById = void 0;
+exports.getAllUserService = exports.getUserById = void 0;
+var user_model_1 = require("../models/user.model");
 var redis_1 = require("../util/redis");
+//get user by id
 var getUserById = function (id, res) { return __awaiter(void 0, void 0, void 0, function () {
     var userJson, user;
     return __generator(this, function (_a) {
@@ -47,7 +49,7 @@ var getUserById = function (id, res) { return __awaiter(void 0, void 0, void 0, 
                 userJson = _a.sent();
                 if (!userJson) {
                     user = JSON.parse(userJson);
-                    res.status(200).json({
+                    res.status(201).json({
                         success: true,
                         user: user
                     });
@@ -57,3 +59,20 @@ var getUserById = function (id, res) { return __awaiter(void 0, void 0, void 0, 
     });
 }); };
 exports.getUserById = getUserById;
+//get all user
+var getAllUserService = function (res) { return __awaiter(void 0, void 0, void 0, function () {
+    var users;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, user_model_1.default.find().sort({ createdAt: -1 })];
+            case 1:
+                users = _a.sent();
+                res.status(201).json({
+                    success: true,
+                    users: users
+                });
+                return [2 /*return*/];
+        }
+    });
+}); };
+exports.getAllUserService = getAllUserService;

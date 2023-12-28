@@ -1,6 +1,7 @@
 import {NextFunction,Response} from "express";
 import {CatchAsyncError} from "../middleware/catchAsyncErrors";
 import OrderModel from "../models/orderModel";
+import userModel from "../models/user.model";
 
 //create new order
 export const newOrder = CatchAsyncError(async (data:any,next:NextFunction,res:Response)=>{
@@ -10,5 +11,13 @@ export const newOrder = CatchAsyncError(async (data:any,next:NextFunction,res:Re
         success:true,
         order,
     })
-
 })
+
+//get all orders ->only for admin
+export const getAllOrderService = async (res:Response)=>{
+    const orders = await OrderModel.find().sort({createdAt:-1});
+    res.status(201).json({
+        success:true,
+        orders
+    });
+}

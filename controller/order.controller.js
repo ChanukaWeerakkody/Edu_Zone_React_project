@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createOrder = void 0;
+exports.getAllOrders = exports.createOrder = void 0;
 var path = require("path");
 var catchAsyncErrors_1 = require("../middleware/catchAsyncErrors");
 var ErrorHandler_1 = require("../util/ErrorHandler");
@@ -123,5 +123,17 @@ exports.createOrder = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res
                 return [2 /*return*/, next(new ErrorHandler_1.default(err_2.message, 500))];
             case 12: return [2 /*return*/];
         }
+    });
+}); });
+//get all orders ->only for admin
+exports.getAllOrders = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        try {
+            (0, order_service_1.getAllOrderService)(res);
+        }
+        catch (error) {
+            return [2 /*return*/, next(new ErrorHandler_1.default(error.message, 500))];
+        }
+        return [2 /*return*/];
     });
 }); });

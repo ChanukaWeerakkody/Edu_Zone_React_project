@@ -2,8 +2,9 @@ import {NextFunction,Request,Response} from "express";
 import {CatchAsyncError} from "../middleware/catchAsyncErrors";
 import ErrorHandler from "../util/ErrorHandler";
 import * as cloudinary from 'cloudinary';
-import {createCourse} from "../services/course.service";
+import {createCourse, getAllCourseService} from "../services/course.service";
 import CourseModel from "../models/course.model";
+import {getAllUserService} from "../services/user.service";
 
 //add course
 export const uploadCourse = CatchAsyncError(async (req:Request,res:Response,next:NextFunction)=>{
@@ -110,7 +111,14 @@ export const getCourseByUser = CatchAsyncError(async (req:any,res:Response,next:
     }
 })
 
-
+//get all courses ->only for admin
+export const getAllCoursesService = CatchAsyncError(async(req:any,res:Response,next:NextFunction)=>{
+    try {
+        getAllCourseService(res);
+    }catch (error:any){
+        return next(new ErrorHandler(error.message,500));
+    }
+});
 
 
 

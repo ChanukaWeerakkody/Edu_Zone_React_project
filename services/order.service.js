@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.newOrder = void 0;
+exports.getAllOrderService = exports.newOrder = void 0;
 var catchAsyncErrors_1 = require("../middleware/catchAsyncErrors");
 var orderModel_1 = require("../models/orderModel");
 //create new order
@@ -55,3 +55,20 @@ exports.newOrder = (0, catchAsyncErrors_1.CatchAsyncError)(function (data, next,
         }
     });
 }); });
+//get all orders ->only for admin
+var getAllOrderService = function (res) { return __awaiter(void 0, void 0, void 0, function () {
+    var orders;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, orderModel_1.default.find().sort({ createdAt: -1 })];
+            case 1:
+                orders = _a.sent();
+                res.status(201).json({
+                    success: true,
+                    orders: orders
+                });
+                return [2 /*return*/];
+        }
+    });
+}); };
+exports.getAllOrderService = getAllOrderService;
