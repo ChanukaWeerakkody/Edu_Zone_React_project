@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getNotifications = void 0;
+exports.updateNotification = exports.getNotifications = void 0;
 var notificationModel_1 = require("../models/notificationModel");
 var catchAsyncErrors_1 = require("../middleware/catchAsyncErrors");
 var ErrorHandler_1 = require("../util/ErrorHandler");
@@ -59,6 +59,40 @@ exports.getNotifications = (0, catchAsyncErrors_1.CatchAsyncError)(function (req
                 err_1 = _a.sent();
                 return [2 /*return*/, next(new ErrorHandler_1.default(err_1.message, 500))];
             case 3: return [2 /*return*/];
+        }
+    });
+}); });
+//update notification ->only for admin
+exports.updateNotification = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var notification, notifications, err_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 4, , 5]);
+                return [4 /*yield*/, notificationModel_1.default.findById(req.params.id)];
+            case 1:
+                notification = _a.sent();
+                if (!notification) {
+                    return [2 /*return*/, next(new ErrorHandler_1.default("Notification not found", 404))];
+                }
+                else {
+                    notification.status ? notification.status = "read" : notification === null || notification === void 0 ? void 0 : notification.status;
+                }
+                return [4 /*yield*/, notification.save()];
+            case 2:
+                _a.sent();
+                return [4 /*yield*/, notificationModel_1.default.find().sort({ createdAt: -1 })];
+            case 3:
+                notifications = _a.sent();
+                res.status(201).json({
+                    success: true,
+                    notifications: notifications
+                });
+                return [3 /*break*/, 5];
+            case 4:
+                err_2 = _a.sent();
+                return [2 /*return*/, next(new ErrorHandler_1.default(err_2.message, 500))];
+            case 5: return [2 /*return*/];
         }
     });
 }); });
