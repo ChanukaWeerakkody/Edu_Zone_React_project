@@ -36,11 +36,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserAnalytics = void 0;
+exports.getOrderAnalytics = exports.getCourseAnalytics = exports.getUserAnalytics = void 0;
 var catchAsyncErrors_1 = require("../middleware/catchAsyncErrors");
 var ErrorHandler_1 = require("../util/ErrorHandler");
 var analytics_genarator_1 = require("../util/analytics.genarator");
 var user_model_1 = require("../models/user.model");
+var course_model_1 = require("../models/course.model");
+var orderModel_1 = require("../models/orderModel");
 //get user analytics
 exports.getUserAnalytics = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var user, err_1;
@@ -59,6 +61,50 @@ exports.getUserAnalytics = (0, catchAsyncErrors_1.CatchAsyncError)(function (req
             case 2:
                 err_1 = _a.sent();
                 return [2 /*return*/, next(new ErrorHandler_1.default(err_1.message, 500))];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+//get course analytics
+exports.getCourseAnalytics = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var course, err_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, (0, analytics_genarator_1.generateLast12MonthsData)(course_model_1.default)];
+            case 1:
+                course = _a.sent();
+                res.status(200).json({
+                    success: true,
+                    course: course
+                });
+                return [3 /*break*/, 3];
+            case 2:
+                err_2 = _a.sent();
+                return [2 /*return*/, next(new ErrorHandler_1.default(err_2.message, 500))];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+//get order analytics
+exports.getOrderAnalytics = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var order, err_3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, (0, analytics_genarator_1.generateLast12MonthsData)(orderModel_1.default)];
+            case 1:
+                order = _a.sent();
+                res.status(200).json({
+                    success: true,
+                    order: order
+                });
+                return [3 /*break*/, 3];
+            case 2:
+                err_3 = _a.sent();
+                return [2 /*return*/, next(new ErrorHandler_1.default(err_3.message, 500))];
             case 3: return [2 /*return*/];
         }
     });

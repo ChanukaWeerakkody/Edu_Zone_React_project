@@ -98,7 +98,17 @@ exports.updateNotification = (0, catchAsyncErrors_1.CatchAsyncError)(function (r
     });
 }); });
 //delete notification ->only for admin
-cron.schedule("*/5 * * * * *", function () {
-    console.log("---------------------------");
-    console.log("running a task every 5 seconds");
-});
+cron.schedule("0 0 0 * * *", function () { return __awaiter(void 0, void 0, void 0, function () {
+    var thirtyDaysAgo;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+                return [4 /*yield*/, notificationModel_1.default.deleteMany({ status: "read", createdAt: { $lt: thirtyDaysAgo } })];
+            case 1:
+                _a.sent();
+                console.log("Deleted read notifications older than 30 days");
+                return [2 /*return*/];
+        }
+    });
+}); });
