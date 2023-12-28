@@ -11,6 +11,7 @@ import NotificationModel from "../models/notificationModel";
 import userModel from "../models/user.model";
 import {getAllOrderService, newOrder} from "../services/order.service";
 import {getAllUserService} from "../services/user.service";
+import {redis} from "../util/redis";
 
 
 //create order
@@ -89,3 +90,22 @@ export const getAllOrders = CatchAsyncError(async(req:any,res:Response,next:Next
         return next(new ErrorHandler(error.message,500));
     }
 });
+
+//delete order ->only for admin
+export const deleteOrder = CatchAsyncError(async(req:Request,res:Response,next:NextFunction)=>{
+    try {
+        const {id} = req.params;
+        const order = await OrderModel.findById(id);
+        if(!order){
+            return next(new ErrorHandler("Order not found",404));
+        }
+        await order.deleteOne({id});
+        await redis.del(id);
+        res.status(200).json({
+            success:true,
+            message:"Order deleted successfully",
+        })
+    }catch (error:any){
+        return next(new ErrorHandler(error.message,500));
+    }
+})

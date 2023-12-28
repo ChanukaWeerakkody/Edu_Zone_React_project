@@ -36,12 +36,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllCoursesService = exports.getCourseByUser = exports.getAllCourses = exports.getSingleCourse = exports.updateCourse = exports.uploadCourse = void 0;
+exports.deleteCourse = exports.getAllCoursesService = exports.getCourseByUser = exports.getAllCourses = exports.getSingleCourse = exports.updateCourse = exports.uploadCourse = void 0;
 var catchAsyncErrors_1 = require("../middleware/catchAsyncErrors");
 var ErrorHandler_1 = require("../util/ErrorHandler");
 var cloudinary = require("cloudinary");
 var course_service_1 = require("../services/course.service");
 var course_model_1 = require("../models/course.model");
+var redis_1 = require("../util/redis");
 //add course
 exports.uploadCourse = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var data, thumbnail, myCloud, err_1;
@@ -199,5 +200,37 @@ exports.getAllCoursesService = (0, catchAsyncErrors_1.CatchAsyncError)(function 
             return [2 /*return*/, next(new ErrorHandler_1.default(error.message, 500))];
         }
         return [2 /*return*/];
+    });
+}); });
+//delete course ->only for admin
+exports.deleteCourse = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, course, error_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 4, , 5]);
+                id = req.params.id;
+                return [4 /*yield*/, course_model_1.default.findById(id)];
+            case 1:
+                course = _a.sent();
+                if (!course) {
+                    return [2 /*return*/, next(new ErrorHandler_1.default("Course not found", 404))];
+                }
+                return [4 /*yield*/, course.deleteOne({ id: id })];
+            case 2:
+                _a.sent();
+                return [4 /*yield*/, redis_1.redis.del(id)];
+            case 3:
+                _a.sent();
+                res.status(200).json({
+                    success: true,
+                    message: "Course deleted successfully",
+                });
+                return [3 /*break*/, 5];
+            case 4:
+                error_1 = _a.sent();
+                return [2 /*return*/, next(new ErrorHandler_1.default(error_1.message, 500))];
+            case 5: return [2 /*return*/];
+        }
     });
 }); });

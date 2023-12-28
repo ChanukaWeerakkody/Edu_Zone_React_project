@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllUsers = exports.updateUserInfo = exports.socialAuth = exports.getUserInfo = exports.updateAccessToken = exports.logoutUser = exports.loginUser = exports.activateUser = exports.createActivationToken = exports.registerUser = void 0;
+exports.deleteUser = exports.getAllUsers = exports.updateUserInfo = exports.socialAuth = exports.getUserInfo = exports.updateAccessToken = exports.logoutUser = exports.loginUser = exports.activateUser = exports.createActivationToken = exports.registerUser = void 0;
 var path = require("path");
 require('dotenv').config();
 var ErrorHandler_1 = require("../util/ErrorHandler");
@@ -336,5 +336,37 @@ exports.getAllUsers = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res
             return [2 /*return*/, next(new ErrorHandler_1.default(error.message, 500))];
         }
         return [2 /*return*/];
+    });
+}); });
+//delete user ->only for admin
+exports.deleteUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, user, error_8;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 4, , 5]);
+                id = req.params.id;
+                return [4 /*yield*/, user_model_1.default.findById(id)];
+            case 1:
+                user = _a.sent();
+                if (!user) {
+                    return [2 /*return*/, next(new ErrorHandler_1.default("User not found", 404))];
+                }
+                return [4 /*yield*/, user.deleteOne({ id: id })];
+            case 2:
+                _a.sent();
+                return [4 /*yield*/, redis_1.redis.del(id)];
+            case 3:
+                _a.sent();
+                res.status(200).json({
+                    success: true,
+                    message: "User deleted successfully",
+                });
+                return [3 /*break*/, 5];
+            case 4:
+                error_8 = _a.sent();
+                return [2 /*return*/, next(new ErrorHandler_1.default(error_8.message, 500))];
+            case 5: return [2 /*return*/];
+        }
     });
 }); });

@@ -1,6 +1,6 @@
 import * as express from "express";
 import {
-    activateUser, getAllUsers,
+    activateUser, deleteUser, getAllUsers,
     getUserInfo,
     loginUser,
     logoutUser,
@@ -25,6 +25,9 @@ userRouter.get("/me",getUserInfo);
 userRouter.post("/socialAuth",socialAuth);
 
 userRouter.put("/updateUser",updateUserInfo);
+
 userRouter.get("/getAll-users",getAllUsers);
+
+userRouter.delete("/delete-user/:id",deleteUser);
 
 export default userRouter;

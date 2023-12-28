@@ -12,4 +12,5 @@ userRouter.get("/me", user_controller_1.getUserInfo);
 userRouter.post("/socialAuth", user_controller_1.socialAuth);
 userRouter.put("/updateUser", user_controller_1.updateUserInfo);
 userRouter.get("/getAll-users", user_controller_1.getAllUsers);
+userRouter.delete("/delete-user/:id", user_controller_1.deleteUser);
 exports.default = userRouter;
