@@ -12,6 +12,7 @@ var error_1 = require("./middleware/error");
 var order_route_1 = require("./route/order.route");
 var notification_route_1 = require("./route/notification.route");
 var analytics_route_1 = require("./route/analytics.route");
+var layout_route_1 = require("./route/layout.route");
 //body parser
 exports.app.use(express.json({ limit: "50mb" }));
 //cookie-parser
@@ -26,6 +27,7 @@ exports.app.use('/api/v1', course_route_1.default);
 exports.app.use('/api/v1', order_route_1.default);
 exports.app.use('/api/v1', notification_route_1.default);
 exports.app.use('/api/v1', analytics_route_1.default);
+exports.app.use('/api/v1', layout_route_1.default);
 //testing api
 exports.app.get("/test", function (req, res, next) {
     res.status(200).json({
