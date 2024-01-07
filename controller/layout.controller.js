@@ -120,63 +120,6 @@ exports.createLayout = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, re
         }
     });
 }); });
-//edit layout
-/*export const editLayout = CatchAsyncError(async (req:Request,res:Response,next:NextFunction)=>{
-    try{
-        const {type} = req.body;
-        if(type === "Banner"){
-            const bannerData:any = await LayoutModel.findOne({type:"Banner"});
-            const {image,title,subTitle} = req.body;
-            if(bannerData){
-                await cloudinary.v2.uploader.destroy(bannerData.image.public_id);
-            }
-            const myCloud = await cloudinary.v2.uploader.upload(image,{
-                folder:"layout",
-            })
-            const banner ={
-                image:{
-                    public_id:myCloud.public_id,
-                    url:myCloud.secure_url
-                },
-                title,
-                subTitle
-            }
-            await LayoutModel.findByIdAndUpdate(bannerData.id,{banner});
-        }
-        if(type === "FAQ"){
-            const {faq} = req.body;
-            const faqItem = await LayoutModel.findOne({type:"FAQ"});
-            const faqItems = await Promise.all(
-                faq.map(async (item:any)=>{
-                    return{
-                        question: item.question,
-                        answer: item.answer
-                    }
-                })
-            )
-            await LayoutModel.findByIdAndUpdate(faqItem?.id,{type:"FAQ",faq:faqItems});
-        }
-
-        if(type === "Categories"){
-            const {categories} = req.body;
-            const categoryItems = await Promise.all(
-                categories.map(async (item:any)=>{
-                    return{
-                        title: item.title,
-                    }
-                })
-            )
-            await LayoutModel.create({type:"Categories",categories:categoryItems});
-        }
-        res.status(200).json({
-            success:true,
-            message:"Layout created successfully"
-        })
-    }catch (err:any){
-        return next(new ErrorHandler(err.message,500));
-    }
-
-});*/
 //get layout
 exports.getLayoutByType = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var type, layout, err_2;

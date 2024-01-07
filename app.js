@@ -19,7 +19,8 @@ exports.app.use(express.json({ limit: "50mb" }));
 exports.app.use(cookieParser());
 //cors => cross origin resource sharing
 exports.app.use(cors({
-    origin: process.env.ORIGIN
+    origin: ['http://localhost:3000'],
+    credentials: true
 }));
 //Routes
 exports.app.use('/api/v1', user_route_1.default);
