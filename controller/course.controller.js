@@ -36,13 +36,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteCourse = exports.getAllCoursesService = exports.getCourseByUser = exports.getAllCourses = exports.getSingleCourse = exports.updateCourse = exports.uploadCourse = void 0;
+exports.generateVideoUrl = exports.deleteCourse = exports.getAllCoursesService = exports.getCourseByUser = exports.getAllCourses = exports.getSingleCourse = exports.updateCourse = exports.uploadCourse = void 0;
 var catchAsyncErrors_1 = require("../middleware/catchAsyncErrors");
 var ErrorHandler_1 = require("../util/ErrorHandler");
 var cloudinary = require("cloudinary");
 var course_service_1 = require("../services/course.service");
 var course_model_1 = require("../models/course.model");
 var redis_1 = require("../util/redis");
+var axios_1 = require("axios");
 //add course
 exports.uploadCourse = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var data, thumbnail, myCloud, err_1;
@@ -231,6 +232,32 @@ exports.deleteCourse = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, re
                 error_1 = _a.sent();
                 return [2 /*return*/, next(new ErrorHandler_1.default(error_1.message, 500))];
             case 5: return [2 /*return*/];
+        }
+    });
+}); });
+//generate video url ->only for admin
+exports.generateVideoUrl = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var videoId, response, error_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                videoId = req.body.videoId;
+                return [4 /*yield*/, axios_1.default.post("https://dev.vdochiper.com/api/videos/".concat(videoId, "/otp"), { ttl: 300 }, {
+                        headers: {
+                            Accept: "application/json",
+                            "Content-Type": "application/json",
+                            "Authorization": "Apisecret ".concat(process.env.VDOCHIPER_API_SECRET)
+                        }
+                    })];
+            case 1:
+                response = _a.sent();
+                res.json(response.data);
+                return [3 /*break*/, 3];
+            case 2:
+                error_2 = _a.sent();
+                return [2 /*return*/, next(new ErrorHandler_1.default(error_2.message, 500))];
+            case 3: return [2 /*return*/];
         }
     });
 }); });

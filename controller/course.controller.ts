@@ -7,6 +7,7 @@ import CourseModel from "../models/course.model";
 import {getAllUserService} from "../services/user.service";
 import userModel from "../models/user.model";
 import {redis} from "../util/redis";
+import axios from "axios";
 
 //add course
 export const uploadCourse = CatchAsyncError(async (req:Request,res:Response,next:NextFunction)=>{
@@ -136,6 +137,28 @@ export const deleteCourse = CatchAsyncError(async(req:Request,res:Response,next:
             success:true,
             message:"Course deleted successfully",
         })
+    }catch (error:any){
+        return next(new ErrorHandler(error.message,500));
+    }
+})
+
+//generate video url ->only for admin
+export const generateVideoUrl = CatchAsyncError(async(req:Request,res:Response,next:NextFunction)=>{
+    try {
+        const {videoId} = req.body;
+        const response = await axios.post(
+            `https://dev.vdochiper.com/api/videos/${videoId}/otp`,
+            {ttl:300},
+            {
+                headers:{
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                    "Authorization":`Apisecret ${process.env.VDOCHIPER_API_SECRET}`
+                }
+            }
+        );
+        res.json(response.data);
+
     }catch (error:any){
         return next(new ErrorHandler(error.message,500));
     }
