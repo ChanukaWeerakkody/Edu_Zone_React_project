@@ -10,4 +10,5 @@ courseRouter.get("/get-courses", course_controller_1.getAllCourses);
 courseRouter.get("/get-course-content/:id", course_controller_1.getCourseByUser);
 courseRouter.get("/getAll-courses", course_controller_1.getAllCoursesService);
 courseRouter.delete("/delete-course/:id", course_controller_1.deleteCourse);
+courseRouter.post("/getVdoCipherOTP", course_controller_1.generateVideoUrl);
 exports.default = courseRouter;
